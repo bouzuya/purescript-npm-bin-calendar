@@ -1,5 +1,5 @@
 {
-  "name": "purescript-npm-bin-calendar",
+  "name": "@bouzuya/habit-calendar",
   "description": "[bouzuya/w010][] app.",
   "version": "0.0.0",
   "author": {
@@ -7,7 +7,7 @@
     "name": "bouzuya",
     "email": "m@bouzuya.net"
   },
-  "bin": "purescript-npm-bin-calendar",
+  "bin": "./bin/habit-calendar",
   "bugs": {
     "url": "https://github.com/bouzuya/purescript-npm-bin-calendar/issues"
   },
@@ -16,6 +16,9 @@
     "purescript": "^0.12.2",
     "spago": "^0.6.4"
   },
+  "files": [
+    "bin"
+  ],
   "homepage": "https://github.com/bouzuya/purescript-npm-bin-calendar#readme",
   "keywords": [],
   "license": "MIT",
