@@ -6,6 +6,12 @@
 
 ## Usage
 
+```bash
+npx @bouzuya/habit-calendar <FILE>
+```
+
+## Example
+
 ```
 $ npm install
 $ ./bin/purescript-npm-bin-calendar example.json
