@@ -4,10 +4,13 @@ import Prelude
 
 import Effect (Effect)
 import Effect.Console (log)
-
 import Main as Main
+import Test.Format as Format
+import Test.Unit.Main (runTest)
 
 main :: Effect Unit
 main = do
   Main.main
   log "You should add some tests."
+  runTest do
+    Format.tests

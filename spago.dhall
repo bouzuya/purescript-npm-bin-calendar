@@ -9,6 +9,7 @@ You can edit this file as you like.
     , "console"
     , "datetime"
     , "effect"
+    , "formatters"
     , "psci-support"
     , "test-unit"
     ]
