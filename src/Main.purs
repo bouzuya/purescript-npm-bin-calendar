@@ -3,6 +3,7 @@ module Main where
 import Prelude
 
 import Calendar (calendarDates)
+import Data.Array as Array
 import Data.Date as Date
 import Data.Enum (toEnum)
 import Data.Foldable as Foldable
@@ -14,40 +15,37 @@ import Effect.Exception (throw)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Format as Format
+import Node.Encoding as Encoding
+import Node.FS.Sync as FS
+import Node.Process as Process
+import Simple.JSON as SimpleJSON
 import WeekDate as WeekDate
-
-calendarData :: Object Boolean
-calendarData =
-  Object.fromFoldable
-    [ Tuple "2019-01-01" true
-    , Tuple "2019-01-03" true
-    , Tuple "2019-01-05" true
-    , Tuple "2019-02-01" true
-    , Tuple "2019-03-01" true
-    , Tuple "2019-04-01" true
-    , Tuple "2019-05-01" true
-    , Tuple "2019-06-01" true
-    , Tuple "2019-07-01" true
-    , Tuple "2019-08-01" true
-    , Tuple "2019-09-01" true
-    , Tuple "2019-10-01" true
-    , Tuple "2019-11-01" true
-    , Tuple "2019-12-30" true
-    ]
 
 main :: Effect Unit
 main = do
+  args <- map (Array.drop 2) Process.argv
+  file <-
+    maybe
+      (throw "Usage: purescript-npm-bin-calendar <FILE>")
+      pure
+      (Array.head args)
+  text <- FS.readTextFile Encoding.UTF8 file
+  calendarData <-
+    maybe
+      (throw "invalid file format")
+      pure
+      (SimpleJSON.readJSON_ text :: _ (Object Boolean))
   year <- maybe (throw "invalid year") pure (toEnum 2019)
   calendar <- maybe (throw "invalid calendar") pure (calendarDates year)
-  Foldable.for_ calendar (Console.log <<< (buildLine year))
+  Foldable.for_ calendar (Console.log <<< (buildLine calendarData year))
   where
-    buildLine year (Tuple dow wdates) =
+    buildLine calendarData year (Tuple dow wdates) =
       Foldable.intercalate
         " "
         [ Format.dayOfWeekShortName dow
-        , Foldable.fold (map (buildChar year) wdates)
+        , Foldable.fold (map (buildChar calendarData year) wdates)
         ]
-    buildChar year wdate =
+    buildChar calendarData year wdate =
       let date = WeekDate.toDate wdate
       in
         if Date.year date == year

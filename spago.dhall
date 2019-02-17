@@ -11,7 +11,10 @@ You can edit this file as you like.
     , "effect"
     , "foreign-object"
     , "formatters"
+    , "node-fs"
+    , "node-process"
     , "psci-support"
+    , "simple-json"
     , "test-unit"
     ]
 , packages =
