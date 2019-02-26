@@ -2,10 +2,11 @@ module Main where
 
 import Prelude
 
-import Calendar (calendarDates)
+import Bouzuya.DateTime.WeekDate as WeekDate
+import Calendar as Calendar
 import Data.Array as Array
 import Data.Date as Date
-import Data.Enum (toEnum)
+import Data.Enum as Enum
 import Data.Foldable as Foldable
 import Data.Maybe (Maybe(..), maybe)
 import Data.Tuple (Tuple(..))
@@ -19,7 +20,6 @@ import Node.Encoding as Encoding
 import Node.FS.Sync as FS
 import Node.Process as Process
 import Simple.JSON as SimpleJSON
-import WeekDate as WeekDate
 
 main :: Effect Unit
 main = do
@@ -35,8 +35,9 @@ main = do
       (throw "invalid file format")
       pure
       (SimpleJSON.readJSON_ text :: _ (Object Boolean))
-  year <- maybe (throw "invalid year") pure (toEnum 2019)
-  calendar <- maybe (throw "invalid calendar") pure (calendarDates year)
+  year <- maybe (throw "invalid year") pure (Enum.toEnum 2019)
+  calendar <-
+    maybe (throw "invalid calendar") pure (Calendar.calendarDates year)
   Foldable.for_ calendar (Console.log <<< (buildLine calendarData year))
   where
     buildLine calendarData year (Tuple dow wdates) =

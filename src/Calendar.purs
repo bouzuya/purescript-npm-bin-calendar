@@ -2,48 +2,44 @@ module Calendar
   ( calendarDates
   ) where
 
-import Bouzuya.DateTime (Weekday)
-import Bouzuya.DateTime as BouzuyaDateTime
+import Bouzuya.DateTime.Date.Extra as DateExtra
+import Bouzuya.DateTime.WeekDate (WeekDate)
+import Bouzuya.DateTime.WeekDate as WeekDate
 import Data.Array as Array
 import Data.Array.NonEmpty as NonEmptyArray
-import Data.Date (Date, Year)
-import Data.Date as Date
-import Data.Enum (enumFromTo)
+import Data.Date (Weekday, Year)
+import Data.Enum as Enum
 import Data.Foldable as Foldable
 import Data.Maybe (Maybe)
 import Data.Tuple (Tuple(..))
-import Prelude (bind, bottom, compose, map, pure, top, (&&), (<>), (==))
-import WeekDate (WeekDate)
-import WeekDate as WeekDate
+import Prelude (bind, bottom, compose, map, pure, top, (&&), (<<<), (<>), (==))
 
 calendarDates :: Year -> Maybe (Array (Tuple Weekday (Array WeekDate)))
 calendarDates year = do
-  f <- firstDayOfCalendar year
-  l <- lastDayOfCalendar year
+  f <- firstWeekDateOfCalendar year
+  l <- lastWeekDateOfCalendar year
   pure
     (Array.zipWith
       Tuple
       weekdays
-      (groupByWeekday (map WeekDate.toWeekDate (enumFromTo f l :: Array Date))))
+      (groupByWeekday (Enum.enumFromTo f l :: Array WeekDate)))
   where
-    firstDayOfCalendar :: Year -> Maybe Date
-    firstDayOfCalendar y = do
-      d <- Date.exactDate y bottom bottom
-      BouzuyaDateTime.exactDateFromWeekOfYear
-        (BouzuyaDateTime.weekYear d)
-        (BouzuyaDateTime.weekOfYear d)
-        bottom
+    firstWeekDateOfCalendar :: Year -> Maybe WeekDate
+    firstWeekDateOfCalendar =
+      WeekDate.firstWeekDateOfWeekYear <<<
+        WeekDate.weekYear <<<
+        WeekDate.fromDate <<<
+        DateExtra.firstDateOfYear
 
-    lastDayOfCalendar :: Year -> Maybe Date
-    lastDayOfCalendar y = do
-      d <- Date.exactDate y top top
-      BouzuyaDateTime.exactDateFromWeekOfYear
-        (BouzuyaDateTime.weekYear d)
-        (BouzuyaDateTime.weekOfYear d)
-        top
+    lastWeekDateOfCalendar :: Year -> Maybe WeekDate
+    lastWeekDateOfCalendar =
+      WeekDate.lastWeekDateOfWeekYear <<<
+        WeekDate.weekYear <<<
+        WeekDate.fromDate <<<
+        DateExtra.lastDateOfYear
 
     weekdays :: Array Weekday
-    weekdays = enumFromTo bottom top
+    weekdays = Enum.enumFromTo bottom top
 
     groupByWeekday :: Array WeekDate -> Array (Array WeekDate)
     groupByWeekday = -- [ [W53-1, W01-1, ...], [W53-2, W01-2, ...], ... ]
@@ -60,4 +56,4 @@ calendarDates year = do
         (Array.groupBy
           (\a b ->
             WeekDate.weekYear a == WeekDate.weekYear b &&
-            WeekDate.weekOfYear a == WeekDate.weekOfYear b))
+            WeekDate.week a == WeekDate.week b))

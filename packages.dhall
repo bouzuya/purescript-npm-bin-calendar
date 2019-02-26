@@ -115,7 +115,7 @@ let upstream =
       https://raw.githubusercontent.com/spacchetti/spacchetti/0.12.2-20190221/src/packages.dhall sha256:17410a9b306ed2b62e940fa71ecb567a4a8a9bbce4188f148b1fc9cb23bdafe2
 
 let bouzuya =
-      https://raw.githubusercontent.com/bouzuya/purescript-bouzuya-packages/20190209/bouzuya.dhall
+      https://raw.githubusercontent.com/bouzuya/purescript-bouzuya-packages/20190225/bouzuya.dhall sha256:b62536e0ea962fb3c8f992e953f5e2373bf67d06a2402581bf7afb886edf82a5
 
 let overrides = {=}
 
