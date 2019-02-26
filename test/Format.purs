@@ -2,11 +2,15 @@ module Test.Format
   ( tests
   ) where
 
+import Bouzuya.DateTime.WeekDate as WeekDate
 import Data.Date (Month, Weekday, exactDate)
+import Data.Date as Date
 import Data.Enum (enumFromTo, toEnum)
+import Data.Enum as Enum
 import Data.Maybe (Maybe(..))
 import Format (dayOfWeekShortName, iso8601Date, monthShortName)
-import Prelude (bind, bottom, discard, top, (<$>))
+import Format as Format
+import Prelude (bind, bottom, discard, top, (<$>), (<<<))
 import Test.Unit (TestSuite, suite, test)
 import Test.Unit.Assert as Assert
 
@@ -42,3 +46,15 @@ tests = suite "Format" do
       , "Dec"
       ]
       (monthShortName <$> enumFromTo bottom top :: Array Month)
+
+  test "weekDate" do
+    let
+      -- 2019-01-02 = 2019-W01-3
+      d1 = do
+        y <- Enum.toEnum 2019
+        m <- Enum.toEnum 1
+        d <- Enum.toEnum 2
+        Date.exactDate y m d
+    Assert.equal
+      (Just "2019-W01-3")
+      ((Format.weekDate <<< WeekDate.fromDate) <$> d1)

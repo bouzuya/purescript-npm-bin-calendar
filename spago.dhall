@@ -5,7 +5,8 @@ You can edit this file as you like.
 { name =
     "purescript-npm-bin-calendar"
 , dependencies =
-    [ "bouzuya-datetime"
+    [ "arrays"
+    , "bouzuya-datetime"
     , "console"
     , "datetime"
     , "effect"
