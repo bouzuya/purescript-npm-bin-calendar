@@ -9,7 +9,6 @@ import Data.Array as Array
 import Data.Date (Weekday, Year)
 import Data.Date as Date
 import Data.Foldable as Foldable
-import Data.Maybe (Maybe(..), maybe)
 import Data.Maybe as Maybe
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
@@ -47,14 +46,17 @@ main = Aff.launchAff_ do
   text <- readFromStream Process.stdin
   calendarData <-
     liftEffect
-      (maybe
+      (Maybe.maybe
         (throw "invalid file format")
         pure
         (SimpleJSON.readJSON_ text :: _ (Array String)))
   year <- liftEffect (map Date.year Now.nowDate)
   calendar <-
     liftEffect
-      (maybe (throw "invalid calendar") pure (Calendar.calendarDates year))
+      (Maybe.maybe
+        (throw "invalid calendar")
+        pure
+        (Calendar.calendarDates year))
   Foldable.for_ calendar (Console.log <<< (formatLine calendarData year))
   where
     formatLine :: CalendarData -> Year -> CalendarLine -> String
