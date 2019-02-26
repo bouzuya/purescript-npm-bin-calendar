@@ -10,10 +10,14 @@ import Bouzuya.DateTime.WeekDate as WeekDate
 import Data.Array as Array
 import Data.Date (Date, Month, Weekday)
 import Data.DateTime as DateTime
+import Data.Either as Either
 import Data.Enum as Enum
 import Data.Formatter.DateTime as DateTimeFormatter
+import Data.Formatter.Number as NumberFormatter
+import Data.Int as Int
 import Data.List as List
 import Data.String as String
+import Partial.Unsafe as Unsafe
 import Prelude (bottom, (<<<), otherwise, show, (<), (<>))
 
 -- Mon, Tue, ...
@@ -46,12 +50,16 @@ weekDate wd =
     y = Enum.fromEnum (WeekDate.weekYear wd)
     woy = Enum.fromEnum (WeekDate.week wd)
     dow = Enum.fromEnum (WeekDate.weekday wd)
-    pad2 n
-      | n < 10 = "0" <> show n
-      | otherwise = show n
-    pad4 n
-      | n < 10 = "000" <> show n
-      | n < 100 = "00" <> show n
-      | n < 1000 = "0" <> show n
-      | otherwise = show n
   in Array.fold [pad4 y, "-W", pad2 woy, "-", show dow]
+
+pad2 :: Int -> String
+pad2 n =
+  Unsafe.unsafePartial
+    (Either.fromRight
+      (NumberFormatter.formatNumber "00" (Int.toNumber n)))
+
+pad4 :: Int -> String
+pad4 n =
+  Unsafe.unsafePartial
+    (Either.fromRight
+      (NumberFormatter.formatNumber "0000" (Int.toNumber n)))
