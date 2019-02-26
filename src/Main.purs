@@ -13,6 +13,7 @@ import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Console as Console
 import Effect.Exception (throw)
+import Effect.Now as Now
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Format as Format
@@ -35,7 +36,7 @@ main = do
       (throw "invalid file format")
       pure
       (SimpleJSON.readJSON_ text :: _ (Object Boolean))
-  year <- maybe (throw "invalid year") pure (Enum.toEnum 2019)
+  year <- map Date.year Now.nowDate
   calendar <-
     maybe (throw "invalid calendar") pure (Calendar.calendarDates year)
   Foldable.for_ calendar (Console.log <<< (buildLine calendarData year))
