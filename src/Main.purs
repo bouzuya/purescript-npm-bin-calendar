@@ -37,9 +37,6 @@ readFromStream r = Aff.makeAff \callback -> do
     callback (pure buffer)
   pure mempty
 
-type CalendarData = Array String
-type CalendarLine = Tuple Weekday (Array WeekDate)
-
 main :: Effect Unit
 main = Aff.launchAff_ do
   _ <- liftEffect (map (Array.drop 2) Process.argv) -- TODO
@@ -57,24 +54,4 @@ main = Aff.launchAff_ do
         (throw "invalid calendar")
         pure
         (Calendar.calendarDates year))
-  Foldable.for_ calendar (Console.log <<< (formatLine calendarData year))
-  where
-    formatLine :: CalendarData -> Year -> CalendarLine -> String
-    formatLine calendarData year (Tuple dow wdates) =
-      Foldable.intercalate
-        " "
-        [ Format.dayOfWeekShortName dow
-        , Foldable.fold (map (formatDate calendarData year) wdates)
-        ]
-
-    formatDate :: CalendarData -> Year -> WeekDate -> String
-    formatDate calendarData year wdate =
-      let date = WeekDate.toDate wdate
-      in
-        if Date.year date /= year
-          then " "
-          else
-            Maybe.maybe
-              "_"
-              (const "O")
-              (Array.find (eq (Format.iso8601Date date)) calendarData)
+  Console.log (Format.calendar calendar calendarData year)
