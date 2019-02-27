@@ -8,6 +8,7 @@ module Format
 
 import Bouzuya.DateTime.WeekDate (WeekDate)
 import Bouzuya.DateTime.WeekDate as WeekDate
+import Control.Alt ((<|>))
 import Data.Array as Array
 import Data.Array.NonEmpty as NonEmptyArray
 import Data.Date (Date, Month, Weekday, Year)
@@ -133,4 +134,5 @@ calendar c calendarData year =
             Maybe.maybe
               "_"
               (const "O")
-              (Array.find (eq (iso8601Date date)) d)
+              ((Array.find (eq (iso8601Date date)) d) <|>
+                (Array.find (eq (weekDate wdate)) d))
