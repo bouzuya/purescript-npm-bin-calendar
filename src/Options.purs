@@ -12,7 +12,7 @@ import Data.Maybe (Maybe(..))
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags as RegexFlags
 import Partial.Unsafe as Unsafe
-import Prelude (bind, join, mempty)
+import Prelude (bind, join)
 
 type Options =
   { year :: Maybe Year

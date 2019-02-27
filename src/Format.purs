@@ -22,7 +22,7 @@ import Data.Maybe as Maybe
 import Data.String as String
 import Data.Tuple (Tuple(..))
 import Partial.Unsafe as Unsafe
-import Prelude (bottom, const, eq, map, otherwise, show, (/=), (<), (<<<), (<>))
+import Prelude (bottom, const, eq, map, show, (/=), (<<<))
 
 -- Mon, Tue, ...
 dayOfWeekShortName :: Weekday -> String

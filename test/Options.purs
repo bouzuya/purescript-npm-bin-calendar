@@ -2,10 +2,7 @@ module Test.Options
   ( tests
   ) where
 
-import Bouzuya.DateTime.WeekDate as WeekDate
-import Data.Date (Month, Weekday, Year, exactDate)
-import Data.Date as Date
-import Data.Enum (enumFromTo, toEnum)
+import Data.Date (Year)
 import Data.Enum as Enum
 import Data.Maybe (Maybe(..))
 import Options as Options
