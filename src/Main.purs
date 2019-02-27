@@ -5,6 +5,7 @@ import Prelude
 import Calendar as Calendar
 import Data.Array as Array
 import Data.Date as Date
+import Data.Enum as Enum
 import Data.Maybe as Maybe
 import Effect (Effect)
 import Effect.Aff (Aff)
@@ -55,4 +56,5 @@ main = Aff.launchAff_ do
         (throw "invalid calendar")
         pure
         (Calendar.calendarDates year))
+  Console.logShow (Enum.fromEnum year)
   Console.log (Format.calendar calendar calendarData year)
