@@ -2,15 +2,10 @@ module Main where
 
 import Prelude
 
-import Bouzuya.DateTime.WeekDate (WeekDate)
-import Bouzuya.DateTime.WeekDate as WeekDate
 import Calendar as Calendar
 import Data.Array as Array
-import Data.Date (Weekday, Year)
 import Data.Date as Date
-import Data.Foldable as Foldable
 import Data.Maybe as Maybe
-import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Aff (Aff)
 import Effect.Aff as Aff
