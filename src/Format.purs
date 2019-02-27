@@ -9,6 +9,7 @@ module Format
 import Bouzuya.DateTime.WeekDate (WeekDate)
 import Bouzuya.DateTime.WeekDate as WeekDate
 import Data.Array as Array
+import Data.Array.NonEmpty as NonEmptyArray
 import Data.Date (Date, Month, Weekday, Year)
 import Data.Date as Date
 import Data.DateTime as DateTime
@@ -22,7 +23,7 @@ import Data.Maybe as Maybe
 import Data.String as String
 import Data.Tuple (Tuple(..))
 import Partial.Unsafe as Unsafe
-import Prelude (bottom, const, eq, map, show, (/=), (<<<))
+import Prelude (bottom, const, eq, map, show, (-), (/=), (<<<), (<>), (==))
 
 -- Mon, Tue, ...
 dayOfWeekShortName :: Weekday -> String
@@ -68,13 +69,52 @@ pad4 n =
     (Either.fromRight
       (NumberFormatter.formatNumber "0000" (Int.toNumber n)))
 
+padEnd :: String -> Int -> String
+padEnd s n = s <> (spaces (n - (String.length s)))
+
+spaces :: Int -> String
+spaces n = Array.fold (Array.replicate n " ")
+
 type CalendarData = Array String
 type CalendarLine = Tuple Weekday (Array WeekDate)
 
 calendar :: Array CalendarLine -> CalendarData -> Year -> String
 calendar c calendarData year =
-  Array.intercalate "\n" (map (formatLine calendarData year) c)
+  Array.intercalate
+    "\n"
+    ((Array.singleton (formatHeaderLine c year)) <>
+      (map (formatLine calendarData year) c))
   where
+    formatHeaderLine :: Array CalendarLine -> Year -> String
+    formatHeaderLine c' y =
+      let
+        (Tuple dow mondays) =
+          Maybe.fromMaybe (Tuple Date.Monday []) (Array.head c')
+        groupedByMonth = -- [[Jan, Jan, ...], [Feb, Feb, ...]]
+          Array.groupBy
+            (\a b -> let f = (Date.month <<< WeekDate.toDate) in f a == f b)
+            mondays
+        monthNames =
+          map
+            (\wds ->
+              let
+                wd = NonEmptyArray.head wds
+                d = WeekDate.toDate wd
+              in
+                if Date.year d == y
+                  then
+                    padEnd
+                      (monthShortName (Date.month d))
+                      (NonEmptyArray.length wds)
+                  else spaces (NonEmptyArray.length wds))
+            groupedByMonth
+      in
+        Array.intercalate
+          " "
+          [ spaces (String.length (dayOfWeekShortName dow))
+          , Array.fold monthNames
+          ]
+
     formatLine :: CalendarData -> Year -> CalendarLine -> String
     formatLine d y (Tuple dow wdates) =
       Array.intercalate
