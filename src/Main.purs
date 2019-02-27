@@ -24,6 +24,7 @@ import Node.Encoding as Encoding
 import Node.Process as Process
 import Node.Stream (Readable)
 import Node.Stream as Stream
+import Options as Options
 import Simple.JSON as SimpleJSON
 
 readFromStream :: Readable () -> Aff String
@@ -39,7 +40,13 @@ readFromStream r = Aff.makeAff \callback -> do
 
 main :: Effect Unit
 main = Aff.launchAff_ do
-  _ <- liftEffect (map (Array.drop 2) Process.argv) -- TODO
+  args <- liftEffect (map (Array.drop 2) Process.argv)
+  options <- pure (Options.parse args)
+  year <-
+    Maybe.maybe
+      (liftEffect (map Date.year Now.nowDate))
+      pure
+      options.year
   text <- readFromStream Process.stdin
   calendarData <-
     liftEffect
@@ -47,7 +54,6 @@ main = Aff.launchAff_ do
         (throw "invalid file format")
         pure
         (SimpleJSON.readJSON_ text :: _ (Array String)))
-  year <- liftEffect (map Date.year Now.nowDate)
   calendar <-
     liftEffect
       (Maybe.maybe
